@@ -1,14 +1,9 @@
 const { ApolloServer, gql } = require("apollo-server");
-const path = require("path");
-const lodashId = require("lodash-id");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+const mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
+mongoose.connect(`mongodb://${process.env.MONGO_URL}/glossary`, {useNewUrlParser: true});
 
-// establish a connection to the database
-const dbDestination = path.join(process.argv[2]);
-const adapter = new FileSync(dbDestination);
-const db = low(adapter);
-db._.mixin(lodashId);
+const Term = mongoose.model('Term', { name: String, definition: String });
 
 const typeDefs = gql`
   type Term {
@@ -18,46 +13,26 @@ const typeDefs = gql`
   }
 
   type Query {
-    helloWorld: String
     term(name: String): Term
     terms: [Term]
   }
 
   type Mutation {
-    updateTerm(name: String, definition: String): Term!
-    deleteTerm(name: String): Term!
+    updateTerm(name: String, definition: String): Term
+    deleteTerm(name: String): Term
   }
 `;
 
 const resolvers = {
   Query: {
-    terms: () => {
-      return db.get("terms").value();
-    },
-    term: (parent, { name, id }) =>
-      db
-        .get("terms")
-        .find({ name })
-        .value()
+    terms: async () => await Term.find().exec(),
+    term: async (parent, { name, id }) =>  await Term.findOne({ name: "test" }).exec()
   },
   Mutation: {
-    updateTerm: (parent, { name, definition }, context, info) => {
-      const collection = db.get("terms");
-      const existingTerm = collection.find({ name });
-      // update the term
-      if (typeof existingTerm.value() !== "undefined") {
-        return existingTerm.assign({ definition }).write();
-      }
-      // add the term
-      else {
-        return collection.insert({ name, definition }).write();
-      }
-    },
-    deleteTerm: (parent, { name }, context, info) =>
-      db
-        .get("terms")
-        .remove({ name })
-        .write()
+    updateTerm: async (parent, { name, definition }, context, info) => 
+      await Term.findOneAndUpdate({ name }, { name, definition }, { upsert: true, useFindAndModify: false, new: true }).exec(),
+    deleteTerm: async (parent, { name }, context, info) =>
+      await Term.findOneAndDelete({ name }).exec()
   }
 };
 

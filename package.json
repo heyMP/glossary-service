@@ -14,14 +14,14 @@
   "dependencies": {
     "apollo-server": "^2.4.0",
     "graphql": "^14.1.1",
-    "lodash-id": "^0.14.0",
-    "lowdb": "^1.0.0"
+    "mongoose": "5.8.9"
   },
   "devDependencies": {
     "nodemon": "^1.18.10"
   },
   "scripts": {
-    "start": "nodemon glossary-service.js test/glossary.json"
+    "start": "node glossary-service.js test/glossary.json",
+    "dev": "nodemon glossary-service.js test/glossary.json"
   },
   "private": false,
   "publishConfig": {

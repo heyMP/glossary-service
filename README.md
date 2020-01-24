@@ -1,4 +1,11 @@
-version: '2'
+# Glossary Service
+
+Service for storing glossary terms.
+
+Example implementation:
+
+```yml
+version: "3"
 services:
   glossary-service:
     build: .
@@ -9,7 +16,6 @@ services:
       - /home/node/node_modules
     environment: 
       MONGO_URL: mongo:27017
-    # command: [ "./node_modules/.bin/nodemon", "glossary-service.js", "test/glossary.json" ]
 
   mongo:
     image: mongo
@@ -17,3 +23,4 @@ services:
 
 volumes:
   mongo:
+```
