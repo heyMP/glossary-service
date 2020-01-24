@@ -8,10 +8,9 @@ services:
       - .:/home/node/
       - /home/node/node_modules
     environment: 
-      MONGO_URL: mongo:27017
-    # command: [ "./node_modules/.bin/nodemon", "glossary-service.js", "test/glossary.json" ]
+      MONGO_URL: mongo-db:27017
 
-  mongo:
+  mongo-db:
     image: mongo
     restart: always
 

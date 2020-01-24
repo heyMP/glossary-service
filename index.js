@@ -26,7 +26,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     terms: async () => await Term.find().exec(),
-    term: async (parent, { name, id }) =>  await Term.findOne({ name: "test" }).exec()
+    term: async (parent, { name, id }) =>  await Term.findOne({ name }).exec()
   },
   Mutation: {
     updateTerm: async (parent, { name, definition }, context, info) => 
